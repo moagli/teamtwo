@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Credit Card Statements</title>
+</head>
+<body>
+    <h1>Credit Card Statements</h1>
+
+    <form method="post">
+        <label for="merchant">Merchant:</label>
+        <input type="text" id="merchant" name="merchant" required><br>
+
+        <label for="amount">Amount:</label>
+        <input type="number" step="0.01" id="amount" name="amount" required><br>
+
+        <label for="co2_emissions">CO2 Emissions:</label>
+        <input type="number" step="0.01" id="co2_emissions" name="co2_emissions" required><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <h2>Statements</h2>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Merchant</th>
+            <th>Amount</th>
+            <th>CO2 Emissions</th>
+        </tr>
+        {% for statement in statements %}
+        <tr>
+            <td>{{ statement[0] }}</td>
+            <td>{{ statement[1] }}</td>
+            <td>{{ statement[2] }}</td>
+            <td>{{ statement[3] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
