@@ -58,7 +58,7 @@ def index2():
 
     return render_template('index.html', statements=statements)
 
-@app.route('/')
+@app.route('/detail')
 def index():
     # Generate the bar chart
     fig, ax = plt.subplots(figsize=(12, 6))
@@ -73,7 +73,7 @@ def index():
     img.seek(0)
     plot_url = base64.b64encode(img.getvalue()).decode('utf8')
 
-    return render_template('index.html', plot_url=plot_url)
+    return render_template('detail.html', plot_url=plot_url)
 
 
 if __name__ == '__main__':
