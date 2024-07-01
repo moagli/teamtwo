@@ -14,7 +14,8 @@ services:
   db:
     image: postgres:13
     environment:
-      - POSTGRES_DB=accountancy_data
+      - POSTGRES_DB=team_two
+      - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=password
     volumes:
       - db-data:/var/lib/postgresql/data
