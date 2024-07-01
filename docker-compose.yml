@@ -3,22 +3,30 @@ version: '3'
 services:
 
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=myapp
+      - DB_USER=myuser
+      - DB_PASSWORD=mypassword
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:13
     ports:
       - "5432:5432"
-    depends_on:
-      - db
     environment:
-      - DATABASE_URL=postgresql://postgres:password@db/accountancy_data
-
-  db:
-    image: postgres:13
-    environment:
-      - POSTGRES_DB=team_two
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=myapp
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
 
 volumes:
-  db-data:
+  postgres-data:
