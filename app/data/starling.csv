@@ -1,4 +1,4 @@
-Date,Counter Party,Reference,Type,Amount (GBP),Balance (GBP),Spending Category,Notes
+Date,CounterParty,Reference,Type,Amount,Balance,Category,Notes
 02/01/2024,Octopus Energy,A-D9C3D096-001,DIRECT DEBIT,-200,8270.06,BILLS_AND_SERVICES,
 04/01/2024,Southern Water,4522424248,DIRECT DEBIT,-27.55,3459.95,BILLS_AND_SERVICES,
 07/01/2024,The Music Workshop,THE MUSIC WORKSHOP,ONLINE PAYMENT,-7,3288.63,BILLS_AND_SERVICES,
