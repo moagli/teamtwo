@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>EcoCompass</title>
@@ -11,15 +12,20 @@
             padding: 20px;
             color: #333;
         }
-        h1, h2 {
+
+        h1,
+        h2 {
             color: #005f5f;
         }
+
         form {
             margin-bottom: 20px;
         }
+
         input[type="file"] {
             margin: 10px 0;
         }
+
         input[type="submit"] {
             background-color: #005f5f;
             color: white;
@@ -28,32 +34,40 @@
             cursor: pointer;
             font-size: 16px;
         }
+
         input[type="submit"]:hover {
             background-color: #004f4f;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
-        th, td {
+
+        th,
+        td {
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
+
         th {
             background-color: #005f5f;
             color: white;
         }
+
         a {
             color: #005f5f;
             text-decoration: none;
         }
+
         a:hover {
             text-decoration: underline;
         }
     </style>
 </head>
+
 <body>
 
     <h1>EcoCompass</h1>
@@ -85,4 +99,5 @@
     <a href="{{ url_for('detail') }}">Detailed View</a>
 
 </body>
+
 </html>
