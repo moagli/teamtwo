@@ -63,6 +63,8 @@ def index():
             # Read the CSV file
             spending_data = pd.read_csv(file)
 
+
+
             # Map the categories to the ones used in the carbon footprint values
             # spending_data["Category"] = spending_data["Category"].map(category_mapping)
             #
