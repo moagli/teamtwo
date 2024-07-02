@@ -38,8 +38,7 @@ cur.execute("""
     CREATE TABLE IF NOT EXISTS topups (
         id SERIAL PRIMARY KEY,
         merchant TEXT,
-        multi NUMERIC(10,2),
-    )
+        multi NUMERIC(10,2))
 """)
 conn.commit()
 
