@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for
-import psycopg2
 from flask import Flask, render_template
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -8,7 +7,10 @@ import base64
 from connections.amex import amex
 from connections.startling_bank import star
 
+import psycopg2
 from psycopg2 import extras
+
+from model_co2 import top10
 
 app = Flask(__name__)
 
@@ -58,6 +60,8 @@ conn.commit()
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    # Fetch all the data from the database
+    statements = top10()
     if request.method == 'POST':
         # Handle file upload
         file = request.files['file']
@@ -65,7 +69,7 @@ def index():
             # Read the CSV file
             spending_data = pd.read_csv(file)
 
-            if "CounterParty" not in spending_data.columns:
+            if "Notes" not in spending_data.columns:
                 file_parser = amex(spending_data)
             else:
                 file_parser = star(spending_data)
@@ -87,23 +91,10 @@ def index():
             cur.execute("COMMIT")
 
             # Redirect to the index page
-            return redirect(url_for('index'))
+            return redirect(url_for('index'), statements=statements)
 
-        # Get the form data
-        # merchant = request.form['merchant']
-        # amount = request.form['amount']
-        # co2_emissions = request.form['co2_emissions']
-        #
-        # # Insert the data into the database
-        # cur.execute("INSERT INTO credit_card_statements (merchant, amount, co2_emissions) VALUES (%s, %s, %s)", (merchant, amount, co2_emissions))
-        # conn.commit()
-
-    # Fetch all the data from the database
-    cur.execute("SELECT * FROM credit_card_statements")
-    statements = cur.fetchall()
-
-    return render_template('index.html')
-    # return render_template('index.html', statements=statements)
+    # return render_template('index.html')
+    return render_template('index.html', statements=statements)
 
 @app.route('/detail')
 def detail():

@@ -56,7 +56,7 @@ class amex:
                 date DATE NOT NULL,
                 description TEXT NOT NULL,
                 amount DECIMAL(10,2) NOT NULL,
-                shop TEXT NOT NULL,
+                counterparty TEXT NOT NULL,
                 reference TEXT,
                 category TEXT NOT NULL,
                 eco_cat TEXT NOT NULL,
