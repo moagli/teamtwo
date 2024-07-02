@@ -3,7 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>EcoCompass</title>
-
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
 </head>
 <body>
 
@@ -14,7 +24,7 @@
         <input type="submit" value="Upload">
     </form>
 
-    <h2>Statements</h2>
+    <h2>Top 10 CO2 Emissions</h2>
     <table>
         <tr>
             <th>Date</th>
@@ -22,12 +32,12 @@
             <th>Category</th>
             <th>CO2 Emissions</th>
         </tr>
-        {% for statement in statements %}
+        {% for index, row in data.iterrows() %}
         <tr>
-            <td>{{ statement[0] }}</td>
-            <td>{{ statement[1] }}</td>
-            <td>{{ statement[2] }}</td>
-            <td>{{ statement[3] }}</td>
+            <td>{{ row['date'] }}</td>
+            <td>{{ row['counterparty'] }}</td>
+            <td>{{ row['eco_cat'] }}</td>
+            <td>{{ row['co2_est'] }}</td>
         </tr>
         {% endfor %}
     </table>

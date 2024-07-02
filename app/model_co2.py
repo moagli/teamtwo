@@ -1,5 +1,8 @@
 import psycopg2
 import pandas as pd
+from matplotlib import pyplot as plt
+import io
+import base64
 
 DB_HOST = "localhost"
 DB_PORT = 5432
@@ -46,3 +49,27 @@ def top10():
 
 def monthly_chart():
     df = calc_co2()
+    df['month'] = pd.to_datetime(df['date']).dt.month
+
+    # Create a bar chart with all 12 months
+    month_totals = df.groupby('month')['co2_est'].sum().reindex(range(1, 13), fill_value=0)
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+    month_totals.astype(float).plot(kind='bar')
+
+    ax.set_xlabel('Month')
+    ax.set_ylabel('Total est_co2')
+    ax.set_title('Monthly Total est_co2')
+    ax.set_xticklabels(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
+
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    plot_url = base64.b64encode(buf.getvalue()).decode('utf-8')
+
+    return plot_url
+
+
+
+if __name__ == '__main__':
+    monthly_chart()
+    print()

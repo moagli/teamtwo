@@ -10,7 +10,7 @@ from connections.startling_bank import star
 import psycopg2
 from psycopg2 import extras
 
-from model_co2 import top10
+from model_co2 import top10, monthly_chart
 
 app = Flask(__name__)
 
@@ -35,33 +35,20 @@ cur = conn.cursor()
 
 # Create the credit card statement table
 cur.execute("""
-    CREATE TABLE IF NOT EXISTS credit_card_statements (
+    CREATE TABLE IF NOT EXISTS topups (
         id SERIAL PRIMARY KEY,
         merchant TEXT,
-        amount NUMERIC(10,2),
-        est_co2_emissions NUMERIC(10,2),
-        top_up_co2 NUMERIC(10,2)
+        multi NUMERIC(10,2),
     )
 """)
 conn.commit()
 
-## top up table
-cur.execute("""
-    CREATE TABLE IF NOT EXISTS credit_card_statements (
-        id SERIAL PRIMARY KEY,
-        merchant TEXT,
-        item NUMERIC(10,2),
-        amount NUMERIC(10,2),
-        est_co2_emissions NUMERIC(10,2),
-        top_up_co2 NUMERIC(10,2)
-    )
-""")
-conn.commit()
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     # Fetch all the data from the database
     statements = top10()
+
     if request.method == 'POST':
         # Handle file upload
         file = request.files['file']
@@ -91,27 +78,14 @@ def index():
             cur.execute("COMMIT")
 
             # Redirect to the index page
-            return redirect(url_for('index'), statements=statements)
+            return redirect(url_for('index'))
 
     # return render_template('index.html')
-    return render_template('index.html', statements=statements)
+    return render_template('index.html', data=statements)
 
 @app.route('/detail')
 def detail():
-    # Generate the bar chart
-    fig, ax = plt.subplots(figsize=(12, 6))
-    calc_co().plot(kind='bar', ax=ax)
-    ax.set_title('Monthly CO2 Emissions')
-    ax.set_xlabel('Month')
-    ax.set_ylabel('CO2 Emissions (kg)')
-
-    # Convert the plot to a base64-encoded image
-    img = io.BytesIO()
-    fig.savefig(img, format='png')
-    img.seek(0)
-    plot_url = base64.b64encode(img.getvalue()).decode('utf8')
-
-    return render_template('detail.html', plot_url=plot_url)
+    return render_template('detail.html', plot_url=monthly_chart())
 
 
 if __name__ == '__main__':
