@@ -48,10 +48,9 @@ conn.commit()
 @app.route("/", methods=["GET", "POST"])
 def index():
     # Fetch all the data from the database
-    try:
-        statements = top10()
-    except:
-        statements = pd.DataFrame()
+
+    statements = top10()
+
 
     if request.method == "POST":
         # Handle file upload

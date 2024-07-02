@@ -93,8 +93,7 @@
             <th>Date</th>
             <th>Merchant</th>
             <th>Category</th>
-            <th>CO2 Emissions Est</th>
-            <th>Data TopUp</th>
+
             <th>Total CO2 Emissions</th>
         </tr>
         {% for index, row in data.iterrows() %}
@@ -102,8 +101,7 @@
             <td>{{ row['date'] }}</td>
             <td>{{ row['counterparty'] }}</td>
             <td>{{ row['eco_cat'] }}</td>
-            <td>{{ row['co2_est'] }}</td>
-            <td>{{ row['multi'] }}</td>
+
             <td>{{ row['eco_co2'] }}</td>
         </tr>
         {% endfor %}

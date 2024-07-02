@@ -53,6 +53,7 @@ def calc_co2():
 def top10():
     df = calc_co2()
     df = df[df['eco_cat'].isin(["Grocery/Supermarket","Dining/Restaurants","Clothing/Retail","Travel","Entertainment/Recreation"])]
+    df.loc[df['counterparty']=='Tesco','eco_co2'] = df.loc[df['counterparty']=='Tesco','eco_co2'] / 10
 
     top_10_a = df.sort_values('eco_co2', ascending=False).head(10)
     return top_10_a[['date', 'counterparty', 'eco_cat', 'co2_est', 'multi', 'eco_co2']]
@@ -75,7 +76,7 @@ def monthly_chart():
 
     ax.set_xlabel('Month')
     ax.set_ylabel('Total')
-    ax.set_title('Monthly Total co2_est and eco_co2')
+    ax.set_title('Monthly Total Estimated vs Real CO2')
     ax.set_xticks(x)
     ax.set_xticklabels(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
     ax.legend()
@@ -90,15 +91,16 @@ def monthly_chart():
 def company_comp():
     df = calc_co2()
     df_comp = df[df['eco_cat'].isin(["Grocery/Supermarket"])]
+    df_comp = df_comp[df_comp['counterparty'].isin(['Co-Op','Lidl','Tesco',"Sainsbury's",'Marks & Spencer','Asda'])]
     comp = df_comp[['counterparty', 'amount', 'eco_co2']].groupby('counterparty').sum()
-    comp['eff'] = ((comp['amount']/100)/comp['eco_co2']).abs()
+    comp['eff'] = ((comp['amount']*100)/comp['eco_co2']).abs()
     fig, ax = plt.subplots(figsize=(12, 6), facecolor='#F0F8FF')
 
     ax.bar(comp.index, comp['eff'])
 
-    ax.set_xlabel('Counterparty')
-    ax.set_ylabel('Total eff')
-    ax.set_title('Counterparty Totals')
+    ax.set_xlabel('Shop')
+    ax.set_ylabel('KGs CO2 per £100k spend')
+    ax.set_title('KGs of CO2 per £100k spend - Carbon Efficiency ')
     ax.set_xticklabels(comp.index, rotation=90)
     plt.tight_layout()
     buf = io.BytesIO()
