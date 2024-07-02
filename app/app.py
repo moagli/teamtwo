@@ -5,8 +5,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import io
 import base64
+from connections.amex import amex
+from connections.startling_bank import star
 
-from connections.startling_bank import calc_co
+from psycopg2 import extras
 
 app = Flask(__name__)
 
@@ -63,23 +65,26 @@ def index():
             # Read the CSV file
             spending_data = pd.read_csv(file)
 
+            if "CounterParty" not in spending_data.columns:
+                file_parser = amex(spending_data)
+            else:
+                file_parser = star(spending_data)
 
+            cur.execute(file_parser.table_def())
+            conn.commit()
 
-            # Map the categories to the ones used in the carbon footprint values
-            # spending_data["Category"] = spending_data["Category"].map(category_mapping)
-            #
-            # # Calculate the carbon footprint for each transaction
-            # spending_data["Carbon Footprint"] = spending_data.apply(
-            #     lambda row: (category_carbon_values.get(row["Category"], (0, 0))[0] +
-            #                  category_carbon_values.get(row["Category"], (0, 0))[1]) / 2 * (row["Amount"] / 100),
-            #     axis=1
-            # )
-            #
-            # # Insert the data into the SQLite database
-            # for _, row in spending_data.iterrows():
-            #     c.execute("INSERT INTO spending (Date, Category, Amount, 'Carbon Footprint') VALUES (?, ?, ?, ?)",
-            #               (row['Date'], row['Category'], row['Amount'], row['Carbon Footprint']))
-            # conn.commit()
+            column_names = ', '.join(file_parser.file.columns)
+
+            # Create a SQL INSERT statement
+            sql = f"INSERT INTO {file_parser.tbl_nm} ({column_names}) VALUES %s"
+
+            # Convert the DataFrame to a list of tuples
+            values = [tuple(x) for x in file_parser.file.to_numpy()]
+
+            # Use the execute_values function to insert the data
+            cur.execute("BEGIN")
+            psycopg2.extras.execute_values(cur, sql, values, template=None, page_size=100)
+            cur.execute("COMMIT")
 
             # Redirect to the index page
             return redirect(url_for('index'))
@@ -97,9 +102,7 @@ def index():
     cur.execute("SELECT * FROM credit_card_statements")
     statements = cur.fetchall()
 
-    co2_value_1 = 40
-    co2_value_2 = 38
-    return render_template('index.html', co2_value_1=co2_value_1, co2_value_2=co2_value_2)
+    return render_template('index.html')
     # return render_template('index.html', statements=statements)
 
 @app.route('/detail')
