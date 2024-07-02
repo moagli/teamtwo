@@ -65,7 +65,7 @@ def monthly_chart():
     co2_totals = df.groupby('month')['co2_est'].sum().reindex(range(1, 13), fill_value=0)
     eco_co2_totals = df.groupby('month')['eco_co2'].sum().reindex(range(1, 13), fill_value=0)
 
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(12, 6), facecolor='#F0F8FF')
 
     x = range(1, 13)
     width = 0.4
@@ -92,7 +92,7 @@ def company_comp():
     df_comp = df[df['eco_cat'].isin(["Grocery/Supermarket"])]
     comp = df_comp[['counterparty', 'amount', 'eco_co2']].groupby('counterparty').sum()
     comp['eff'] = ((comp['amount']/100)/comp['eco_co2']).abs()
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(12, 6), facecolor='#F0F8FF')
 
     ax.bar(comp.index, comp['eff'])
 

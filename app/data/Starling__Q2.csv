@@ -1,4 +1,4 @@
-﻿Date,Counter Party,Reference,Type,Amount (GBP),Balance (GBP),Spending Category,Notes
+﻿Date,CounterParty,Reference,Type,Amount,Balance,Category,Notes
 01/04/2024,Sandy?s Folkestone,Sandy?s Folkestone,APPLE PAY,-22,6238.27,EATING_OUT,
 01/04/2024,Floc Brewing,Floc Brewing Ltd,CONTACTLESS,-25.4,6260.27,ENTERTAINMENT,
 02/04/2024,Octopus Energy,A-D9C3D096-001,DIRECT DEBIT,-200,5058.28,BILLS_AND_SERVICES,
