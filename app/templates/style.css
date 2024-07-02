@@ -13,3 +13,10 @@ body {
     width: 25px; /* Adjust the size as needed */
     height: 25px;
 }
+
+.top-right {
+    position: absolute;
+    width: 25px; /* Adjust the size as needed */
+    height: 25px;
+}
+
