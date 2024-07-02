@@ -36,32 +36,71 @@ def calc_co2():
     columns = [column[0] for column in cur.description]
     # Create a Pandas DataFrame from the fetched data
     df_star = pd.DataFrame(st_star, columns=columns)
-    return pd.concat([df_star, df_amex], ignore_index=True)
+    df_total = pd.concat([df_star, df_amex], ignore_index=True)
+
+    cur.execute("SELECT * FROM topups")
+    st_star = cur.fetchall()
+    columns = [column[0] for column in cur.description]
+    # Create a Pandas DataFrame from the fetched data
+    df_topup = pd.DataFrame(st_star, columns=columns)
+    df_total['multi'] = df_total['counterparty'].map(df_topup.set_index('merchant')['multi'].to_dict()).fillna(1)
+    df_total['eco_co2'] = (df_total['multi']+1) * df_total['co2_est']
+
+    return df_total
+
 
 
 def top10():
     df = calc_co2()
     df = df[df['eco_cat'].isin(["Grocery/Supermarket","Dining/Restaurants","Clothing/Retail","Travel","Entertainment/Recreation"])]
 
-
-    top_10_a = df.sort_values('co2_est', ascending=False).head(10)
-    return top_10_a[['date', 'counterparty', 'eco_cat', 'co2_est']]
+    top_10_a = df.sort_values('eco_co2', ascending=False).head(10)
+    return top_10_a[['date', 'counterparty', 'eco_cat', 'co2_est', 'multi', 'eco_co2']]
 
 def monthly_chart():
     df = calc_co2()
     df['month'] = pd.to_datetime(df['date']).dt.month
 
     # Create a bar chart with all 12 months
-    month_totals = df.groupby('month')['co2_est'].sum().reindex(range(1, 13), fill_value=0)
+    co2_totals = df.groupby('month')['co2_est'].sum().reindex(range(1, 13), fill_value=0)
+    eco_co2_totals = df.groupby('month')['eco_co2'].sum().reindex(range(1, 13), fill_value=0)
 
     fig, ax = plt.subplots(figsize=(12, 6))
-    month_totals.astype(float).plot(kind='bar')
+
+    x = range(1, 13)
+    width = 0.4
+
+    ax.bar(x, co2_totals, width=width, label='co2_est')
+    ax.bar([i + width for i in x], eco_co2_totals, width=width, label='eco_co2')
 
     ax.set_xlabel('Month')
-    ax.set_ylabel('Total est_co2')
-    ax.set_title('Monthly Total est_co2')
+    ax.set_ylabel('Total')
+    ax.set_title('Monthly Total co2_est and eco_co2')
+    ax.set_xticks(x)
     ax.set_xticklabels(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
+    ax.legend()
 
+    # plt.show()
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    plot_url = base64.b64encode(buf.getvalue()).decode('utf-8')
+
+    return plot_url
+
+def company_comp():
+    df = calc_co2()
+    df_comp = df[df['eco_cat'].isin(["Grocery/Supermarket"])]
+    comp = df_comp[['counterparty', 'amount', 'eco_co2']].groupby('counterparty').sum()
+    comp['eff'] = ((comp['amount']/100)/comp['eco_co2']).abs()
+    fig, ax = plt.subplots(figsize=(12, 6))
+
+    ax.bar(comp.index, comp['eff'])
+
+    ax.set_xlabel('Counterparty')
+    ax.set_ylabel('Total eff')
+    ax.set_title('Counterparty Totals')
+    ax.set_xticklabels(comp.index, rotation=90)
+    plt.tight_layout()
     buf = io.BytesIO()
     plt.savefig(buf, format='png')
     plot_url = base64.b64encode(buf.getvalue()).decode('utf-8')
@@ -70,6 +109,7 @@ def monthly_chart():
 
 
 
+
 if __name__ == '__main__':
-    monthly_chart()
+    company_comp()
     print()

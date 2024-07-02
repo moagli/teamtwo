@@ -10,7 +10,7 @@ from connections.startling_bank import star
 import psycopg2
 from psycopg2 import extras
 
-from model_co2 import top10, monthly_chart
+from model_co2 import top10, monthly_chart, company_comp
 
 app = Flask(__name__)
 
@@ -46,7 +46,10 @@ conn.commit()
 @app.route('/', methods=['GET', 'POST'])
 def index():
     # Fetch all the data from the database
-    statements = top10()
+    try:
+        statements = top10()
+    except:
+        statements = pd.DataFrame()
 
     if request.method == 'POST':
         # Handle file upload
@@ -85,6 +88,10 @@ def index():
 @app.route('/detail')
 def detail():
     return render_template('detail.html', plot_url=monthly_chart())
+
+@app.route('/company')
+def company():
+    return render_template('company.html', plot_url=company_comp())
 
 
 if __name__ == '__main__':
