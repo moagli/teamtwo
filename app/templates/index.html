@@ -66,13 +66,30 @@
         a:hover {
             text-decoration: underline;
         }
+
+        /* Adjustments for logo positioning */
+        header {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            /* Adjust as necessary */
+        }
     </style>
 </head>
 
 <body>
     <header>
-        <div style="position: absolute; top: 10; right: 0; padding: 20px;">
-            <img src="{{ url_for('static', filename='images/logo.001.png') }}" alt="EcoCompass Logo" width="250">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/logo.001.png') }}" alt="EcoCompass Logo" width="150">
+        </div>
+        <div>
+            <h1>EcoCompass</h1>
         </div>
     </header>
 
