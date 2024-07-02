@@ -71,8 +71,12 @@
 
 <body>
     <header>
-        <div style="position: absolute; top: 10; right: 0; padding: 20px;">
+        <div style="position: absolute; top: 10; right: 0; padding: 10px;">
             <img src="{{ url_for('static', filename='images/logo.001.png') }}" alt="EcoCompass Logo" width="250">
+        </div>
+        <div style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); padding: 10px;">
+            <!-- Gauge Image -->
+            <img src="{{ url_for('static', filename='images/gauge.png') }}" alt="Gauge Image" width="150">
         </div>
     </header>
 
