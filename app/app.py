@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, render_template, request, redirect, url_for
 import psycopg2
 from flask import Flask, render_template
 import pandas as pd
@@ -35,31 +35,73 @@ cur.execute("""
         id SERIAL PRIMARY KEY,
         merchant TEXT,
         amount NUMERIC(10,2),
-        co2_emissions NUMERIC(10,2)
+        est_co2_emissions NUMERIC(10,2),
+        top_up_co2 NUMERIC(10,2)
+    )
+""")
+conn.commit()
+
+## top up table
+cur.execute("""
+    CREATE TABLE IF NOT EXISTS credit_card_statements (
+        id SERIAL PRIMARY KEY,
+        merchant TEXT,
+        item NUMERIC(10,2),
+        amount NUMERIC(10,2),
+        est_co2_emissions NUMERIC(10,2),
+        top_up_co2 NUMERIC(10,2)
     )
 """)
 conn.commit()
 
 @app.route('/', methods=['GET', 'POST'])
-def index2():
+def index():
     if request.method == 'POST':
-        # Get the form data
-        merchant = request.form['merchant']
-        amount = request.form['amount']
-        co2_emissions = request.form['co2_emissions']
+        # Handle file upload
+        file = request.files['file']
+        if file:
+            # Read the CSV file
+            spending_data = pd.read_csv(file)
 
-        # Insert the data into the database
-        cur.execute("INSERT INTO credit_card_statements (merchant, amount, co2_emissions) VALUES (%s, %s, %s)", (merchant, amount, co2_emissions))
-        conn.commit()
+            # Map the categories to the ones used in the carbon footprint values
+            # spending_data["Category"] = spending_data["Category"].map(category_mapping)
+            #
+            # # Calculate the carbon footprint for each transaction
+            # spending_data["Carbon Footprint"] = spending_data.apply(
+            #     lambda row: (category_carbon_values.get(row["Category"], (0, 0))[0] +
+            #                  category_carbon_values.get(row["Category"], (0, 0))[1]) / 2 * (row["Amount"] / 100),
+            #     axis=1
+            # )
+            #
+            # # Insert the data into the SQLite database
+            # for _, row in spending_data.iterrows():
+            #     c.execute("INSERT INTO spending (Date, Category, Amount, 'Carbon Footprint') VALUES (?, ?, ?, ?)",
+            #               (row['Date'], row['Category'], row['Amount'], row['Carbon Footprint']))
+            # conn.commit()
+
+            # Redirect to the index page
+            return redirect(url_for('index'))
+
+        # Get the form data
+        # merchant = request.form['merchant']
+        # amount = request.form['amount']
+        # co2_emissions = request.form['co2_emissions']
+        #
+        # # Insert the data into the database
+        # cur.execute("INSERT INTO credit_card_statements (merchant, amount, co2_emissions) VALUES (%s, %s, %s)", (merchant, amount, co2_emissions))
+        # conn.commit()
 
     # Fetch all the data from the database
     cur.execute("SELECT * FROM credit_card_statements")
     statements = cur.fetchall()
 
-    return render_template('index.html', statements=statements)
+    co2_value_1 = 40
+    co2_value_2 = 38
+    return render_template('index.html', co2_value_1=co2_value_1, co2_value_2=co2_value_2)
+    # return render_template('index.html', statements=statements)
 
 @app.route('/detail')
-def index():
+def detail():
     # Generate the bar chart
     fig, ax = plt.subplots(figsize=(12, 6))
     calc_co().plot(kind='bar', ax=ax)
