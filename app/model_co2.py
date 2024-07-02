@@ -36,7 +36,7 @@ def calc_co2():
     columns = [column[0] for column in cur.description]
     # Create a Pandas DataFrame from the fetched data
     df_star = pd.DataFrame(st_star, columns=columns)
-    df_total =  pd.concat([df_star, df_amex], ignore_index=True)
+    df_total = pd.concat([df_star, df_amex], ignore_index=True)
 
     cur.execute("SELECT * FROM topups")
     st_star = cur.fetchall()
@@ -54,8 +54,8 @@ def top10():
     df = calc_co2()
     df = df[df['eco_cat'].isin(["Grocery/Supermarket","Dining/Restaurants","Clothing/Retail","Travel","Entertainment/Recreation"])]
 
-    top_10_a = df.sort_values('co2_est', ascending=False).head(10)
-    return top_10_a[['date', 'counterparty', 'eco_cat', 'eco_co2']]
+    top_10_a = df.sort_values('eco_co2', ascending=False).head(10)
+    return top_10_a[['date', 'counterparty', 'eco_cat', 'co2_est', 'multi', 'eco_co2']]
 
 def monthly_chart():
     df = calc_co2()
