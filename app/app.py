@@ -93,7 +93,7 @@ def index():
 
     # Check the row count and execute a conditional statement
     if row_count > 160:
-        image_filename = 'images/guage2.png'
+        image_filename = 'images/gauge2.png'
     else:
         image_filename = 'images/gauge.png'
 
