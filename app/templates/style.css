@@ -1,0 +1,15 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.top-left {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.top-left img {
+    width: 100px; /* Adjust the size as needed */
+    height: auto;
+}
