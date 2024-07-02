@@ -27,23 +27,25 @@ conn = psycopg2.connect(
     port=DB_PORT,
     database=DB_NAME,
     user=DB_USER,
-    password=DB_PASSWORD
+    password=DB_PASSWORD,
 )
 
 # Create a cursor object
 cur = conn.cursor()
 
 # Create the credit card statement table
-cur.execute("""
+cur.execute(
+    """
     CREATE TABLE IF NOT EXISTS topups (
         id SERIAL PRIMARY KEY,
         merchant TEXT,
         multi NUMERIC(10,2))
-""")
+"""
+)
 conn.commit()
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route("/", methods=["GET", "POST"])
 def index():
     # Fetch all the data from the database
     try:
@@ -51,9 +53,9 @@ def index():
     except:
         statements = pd.DataFrame()
 
-    if request.method == 'POST':
+    if request.method == "POST":
         # Handle file upload
-        file = request.files['file']
+        file = request.files["file"]
         if file:
             # Read the CSV file
             spending_data = pd.read_csv(file)
@@ -66,33 +68,39 @@ def index():
             cur.execute(file_parser.table_def())
             conn.commit()
 
-            column_names = ', '.join(file_parser.file.columns)
+            column_names = ", ".join(file_parser.file.columns)
 
             # Create a SQL INSERT statement
-            sql = f"INSERT INTO {file_parser.tbl_nm} ({column_names}) VALUES %s"
+            sql = (
+                f"INSERT INTO {file_parser.tbl_nm} ({column_names}) VALUES %s"
+            )
 
             # Convert the DataFrame to a list of tuples
             values = [tuple(x) for x in file_parser.file.to_numpy()]
 
             # Use the execute_values function to insert the data
             cur.execute("BEGIN")
-            psycopg2.extras.execute_values(cur, sql, values, template=None, page_size=100)
+            psycopg2.extras.execute_values(
+                cur, sql, values, template=None, page_size=100
+            )
             cur.execute("COMMIT")
 
             # Redirect to the index page
-            return redirect(url_for('index'))
+            return redirect(url_for("index"))
 
     # return render_template('index.html')
-    return render_template('index.html', data=statements)
+    return render_template("index.html", data=statements)
 
-@app.route('/detail')
+
+@app.route("/detail")
 def detail():
-    return render_template('detail.html', plot_url=monthly_chart())
+    return render_template("detail.html", plot_url=monthly_chart())
 
-@app.route('/company')
+
+@app.route("/company")
 def company():
-    return render_template('company.html', plot_url=company_comp())
+    return render_template("company.html", plot_url=company_comp())
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8080, debug=True)
