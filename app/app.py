@@ -88,7 +88,16 @@ def index():
             return redirect(url_for("index"))
 
     # return render_template('index.html')
-    return render_template("index.html", data=statements)
+    cur.execute("SELECT COUNT(*) FROM public.starling")
+    row_count = cur.fetchone()[0]
+
+    # Check the row count and execute a conditional statement
+    if row_count > 160:
+        image_filename = 'images/guage2.png'
+    else:
+        image_filename = 'images/gauge.png'
+
+    return render_template("index.html", data=statements, image_filename=image_filename)
 
 
 @app.route("/detail")
