@@ -3,18 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <title>EcoCompass</title>
-
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        h1, h2 {
+            color: #005f5f;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+        input[type="submit"] {
+            background-color: #005f5f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        input[type="submit"]:hover {
+            background-color: #004f4f;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #005f5f;
+            color: white;
+        }
+        a {
+            color: #005f5f;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
 
-    <h1>Credit Card Statements</h1>
+    <h1>EcoCompass</h1>
     <h2>Upload New Data</h2>
     <form action="{{ url_for('index') }}" method="post" enctype="multipart/form-data">
         <input type="file" name="file" required>
         <input type="submit" value="Upload">
     </form>
 
-    <h2>Statements</h2>
+    <h2>Credit Card Statements</h2>
     <table>
         <tr>
             <th>ID</th>
@@ -31,7 +80,9 @@
         </tr>
         {% endfor %}
     </table>
-<h1>Monthly CO2 Emissions</h1>
+
+    <h2>Monthly CO2 Emissions</h2>
     <a href="{{ url_for('detail') }}">Detailed View</a>
+
 </body>
 </html>
