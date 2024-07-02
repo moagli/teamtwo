@@ -44,7 +44,7 @@ def calc_co2():
     # Create a Pandas DataFrame from the fetched data
     df_topup = pd.DataFrame(st_star, columns=columns)
     df_total['multi'] = df_total['counterparty'].map(df_topup.set_index('merchant')['multi'].to_dict()).fillna(1)
-    df_total['eco_co2'] = (df_total['multi']+1) * df_total['co2_est']
+    df_total['eco_co2'] = (df_total['multi']) * df_total['co2_est']
 
     return df_total
 
